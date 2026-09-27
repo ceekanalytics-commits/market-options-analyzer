@@ -1,5 +1,6 @@
 """Local Streamlit app for end-of-day option-chain analysis."""
 
+import inspect
 from datetime import date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
@@ -111,11 +112,12 @@ with st.sidebar:
     if source.startswith("US"):
         choices = us_stock_options()
         default = next((i for i, label in enumerate(choices) if label.startswith("META —")), 0)
+        search_options = {"filter_mode": "contains"} if "filter_mode" in inspect.signature(st.selectbox).parameters else {}
         selected_us = st.selectbox(
             "US stock or ETF", choices, index=default, accept_new_options=True,
-            filter_mode="contains",
             placeholder="Type a ticker or company name",
             help="Start typing to filter the list. Press Enter to use a ticker missing from it.",
+            **search_options,
         )
         symbol_input = selected_us.split(" — ", 1)[0].strip().upper() if selected_us else ""
         token = st.text_input("Your MarketData.app API token", type="password",

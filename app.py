@@ -148,6 +148,10 @@ if not loaded:
     st.info("Choose a source and trade date, then select **Load data**.")
     st.stop()
 
+if loaded["source"] != source or loaded["trade_date"] != trade_date:
+    st.info("The source or trade date changed. Select **Load data** to analyze the new selection.")
+    st.stop()
+
 chain = loaded["chain"]
 actual_date = loaded["trade_date"]
 st.subheader("Select instrument")

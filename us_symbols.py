@@ -47,4 +47,6 @@ def us_stock_options() -> list[str]:
             symbols.update(parse_directory(response.text, column))
         except requests.RequestException:
             continue
-    return [f"{symbol} — {name}" for symbol, name in sorted(symbols.items())]
+    popular = [symbol for symbol in FALLBACK if symbol in symbols]
+    remaining = sorted(symbol for symbol in symbols if symbol not in FALLBACK)
+    return [f"{symbol} — {symbols[symbol]}" for symbol in popular + remaining]

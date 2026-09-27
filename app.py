@@ -9,6 +9,7 @@ import streamlit as st
 
 from engine import Settings, analyze
 from sources import download_nse, download_nse_context, download_us, normalize_upload
+from us_symbols import us_stock_options
 
 
 st.set_page_config(page_title="Market Options Analyzer", page_icon="📊", layout="wide")
@@ -108,7 +109,14 @@ with st.sidebar:
     token = ""
     upload = None
     if source.startswith("US"):
-        symbol_input = st.text_input("US symbol", value="META").strip().upper()
+        choices = us_stock_options()
+        default = next((i for i, label in enumerate(choices) if label.startswith("META —")), 0)
+        selected_us = st.selectbox(
+            "US stock or ETF", choices, index=default, accept_new_options=True,
+            placeholder="Type a ticker or company name",
+            help="Start typing to filter the list. Press Enter to use a ticker missing from it.",
+        )
+        symbol_input = selected_us.split(" — ", 1)[0].strip().upper() if selected_us else ""
         token = st.text_input("Your MarketData.app API token", type="password",
                               help="Each user enters their own token. The app does not use a shared server token.")
     elif source.startswith("Upload"):
@@ -137,6 +145,7 @@ if fetch:
             st.session_state["loaded"] = {
                 "chain": chain, "references": references, "fii": fii, "sectors": sectors,
                 "trade_date": trade_date, "source": source,
+                "requested_symbol": symbol_input if source.startswith("US") else None,
             }
             st.session_state.pop("analysis", None)
         st.success(f"Loaded {len(chain):,} option contracts across {chain['symbol'].nunique()} symbols.")
@@ -147,9 +156,9 @@ loaded = st.session_state.get("loaded")
 if not loaded:
     st.info("Choose a source and trade date, then select **Load data**.")
     st.stop()
-
-if loaded["source"] != source or loaded["trade_date"] != trade_date:
-    st.info("The source or trade date changed. Select **Load data** to analyze the new selection.")
+if (loaded["source"] != source or loaded["trade_date"] != trade_date
+        or (source.startswith("US") and loaded.get("requested_symbol") != symbol_input)):
+    st.info("The source, trade date, or symbol changed. Select **Load data** to analyze the new selection.")
     st.stop()
 
 chain = loaded["chain"]

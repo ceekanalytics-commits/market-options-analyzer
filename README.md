@@ -4,7 +4,7 @@ This is a local Streamlit app based on the logic in `auto_app_v2.py`, which is l
 
 ## Run on macOS
 
-Double-click `Run.command`, or run:
+Double-click `Run.command` (or the desktop `Market Options Analyzer.app`). The first launch creates a private Python environment and installs dependencies. Or run:
 
 ```bash
 cd /path/to/MarketOptionsAnalyzer
@@ -17,7 +17,7 @@ The app opens in your browser on localhost. For public hosting, follow [DEPLOY.m
 ## Data sources
 
 - **NSE derivatives:** Choose a trading date. The app downloads the NSE F&O bhavcopy, participant open-interest report, and sector close report. Available symbols come from that day's F&O file. NSE report availability and URLs are controlled by NSE.
-- **US options:** Enter any US underlying symbol supported by MarketData.app and your own [MarketData.app API token](https://www.marketdata.app/docs/api/authentication/). The app requests the entire end-of-day chain for the chosen date. The free plan currently provides one year of history and 100 credits per day; large chains may consume several credits.
+- **US options:** Start typing a ticker or company name in the searchable dropdown, then select it. You can press Enter to use a ticker missing from the list. Enter your own [MarketData.app API token](https://www.marketdata.app/docs/api/authentication/). The app requests the entire end-of-day chain for the chosen date. The directory comes from Nasdaq Trader's public Nasdaq and other-exchange listings and refreshes daily; inclusion in the list does not guarantee an option chain. The free plan currently provides one year of history and 100 credits per day; large chains may consume several credits.
 - **CSV / NSE ZIP:** Upload a MarketData.app chain export, NSE bhavcopy, or a CSV with `symbol,expiration,side,strike,option_price,volume,open_interest`. Optional columns are `underlying_price,bid,ask,contract`. Dates should be `YYYY-MM-DD`; side should be `call` or `put`. Enter the underlying reference price in the app if the file lacks it. This is how to use option chains from other markets.
 
 The app analyzes **optionable underlyings**. A stock, index, future, or other instrument with no option-chain data cannot produce max pain or put/call ratios.

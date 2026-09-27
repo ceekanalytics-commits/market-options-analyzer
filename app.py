@@ -113,6 +113,7 @@ with st.sidebar:
         default = next((i for i, label in enumerate(choices) if label.startswith("META —")), 0)
         selected_us = st.selectbox(
             "US stock or ETF", choices, index=default, accept_new_options=True,
+            filter_mode="contains",
             placeholder="Type a ticker or company name",
             help="Start typing to filter the list. Press Enter to use a ticker missing from it.",
         )
